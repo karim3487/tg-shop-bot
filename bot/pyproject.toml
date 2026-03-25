@@ -1,0 +1,27 @@
+[project]
+name = "tg-shop-bot"
+version = "0.1.0"
+description = "Telegram Shop Bot"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram>=3.20.0.post0",
+    "psycopg[binary]>=3.2.7",
+    "psycopg-pool>=3.2.6",
+    "pydantic>=2.0.0",
+    "dynaconf>=3.2.10",
+    "redis>=5.2.1",
+    "aiogram-dialog>=2.3.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.12",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]

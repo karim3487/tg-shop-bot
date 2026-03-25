@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --color-tg-bg: var(--tg-theme-bg-color, var(--fallback-bg));
+  --color-tg-secondary-bg: var(--tg-theme-secondary-bg-color, var(--fallback-secondary-bg));
+  --color-tg-text: var(--tg-theme-text-color, var(--fallback-text));
+  --color-tg-hint: var(--tg-theme-hint-color, var(--fallback-hint));
+  --color-tg-link: var(--tg-theme-link-color, var(--fallback-link));
+  --color-tg-button: var(--tg-theme-button-color, var(--fallback-button));
+  --color-tg-button-text: var(--tg-theme-button-text-color, var(--fallback-button-text));
+}
+
+:root {
+  --fallback-bg: #ffffff;
+  --fallback-secondary-bg: #f2f2f7;
+  --fallback-text: #000000;
+  --fallback-hint: #8e8e93;
+  --fallback-link: #007aff;
+  --fallback-button: #007aff;
+  --fallback-button-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fallback-bg: #000000;
+    --fallback-secondary-bg: #1c1c1e;
+    --fallback-text: #ffffff;
+    --fallback-hint: #98989d;
+    --fallback-link: #0a84ff;
+    --fallback-button: #0a84ff;
+    --fallback-button-text: #ffffff;
+  }
+}
+
+body {
+  background-color: var(--color-tg-bg);
+  color: var(--color-tg-text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}

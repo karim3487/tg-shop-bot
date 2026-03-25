@@ -1,0 +1,38 @@
+## Python
+*.py[co]
+__pycache__/
+*.egg*
+.coverage
+
+## Virtual environment
+.venv/
+
+## Environment
+.env
+
+## Project
+staticfiles/
+public/static
+public/media
+
+## SQLite3
+*.sqlite3
+
+## OS
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+## Logs
+*.log
+
+## Editors and IDEs
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+.idea/
+.vscode/
+*~
+\#*\#

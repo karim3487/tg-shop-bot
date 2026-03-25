@@ -1,0 +1,56 @@
+[default]
+    LEVEL_NAME = "DEBUG"
+
+[development]
+
+    [development.logs]
+        LEVEL_NAME = "DEBUG"
+        FORMAT = '[%(asctime)s] #%(levelname)-8s %(filename)s:%(lineno)d - %(name)s - %(message)s'
+
+    [development.bot]
+        PARSE_MODE = 'HTML'
+        WEBAPP_URL = 'https://myweb26.share.zrok.io'
+
+    [development.postgres]
+        NAME = 'tg_shop'
+        HOST = 'localhost'
+        PORT = 5432
+        USER = 'tg_shop_user'
+
+    [development.redis]
+        HOST = 'localhost'
+        PORT = 6379
+        DATABASE = 1
+
+    [development.cache]
+        USE_CACHE = false
+
+    [development.media]
+        URL = "https://mymedia26.share.zrok.io/media"
+
+[production]
+
+    [production.logs]
+        LEVEL_NAME = "INFO"
+        FORMAT = '[%(asctime)s] #%(levelname)-8s %(filename)s:%(lineno)d - %(name)s - %(message)s'
+
+    [production.bot]
+        PARSE_MODE = 'HTML'
+        WEBAPP_URL = 'https://myweb26.share.zrok.io'
+
+    [production.postgres]
+        NAME = 'tg_shop'
+        HOST = 'postgres'
+        PORT = 5432
+        USER = 'tg_shop_user'
+
+    [production.redis]
+        HOST = 'redis'
+        PORT = 6379
+        DATABASE = 0
+
+    [production.cache]
+        USE_CACHE = false
+
+    [production.media]
+        URL = "https://mymedia26.share.zrok.io/media"
