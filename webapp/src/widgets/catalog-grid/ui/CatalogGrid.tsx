@@ -71,6 +71,7 @@ export function CatalogGrid() {
               key={product.id}
               product={product}
               actionSlot={<AddToCartButton product={product} />}
+              onClick={() => router.push(`/catalog/${product.id}`)}
             />
           ))}
         </div>

@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { productApi, productKeys } from "@/entities/product";
+import { useHapticFeedback } from "@/shared/telegram/hooks";
 
 interface CategoryTabsProps {
   selectedParentId: number | null;
@@ -16,6 +17,8 @@ export function CategoryTabs({
   onSelectParent,
   onSelectSub,
 }: CategoryTabsProps) {
+  const { selectionChanged } = useHapticFeedback();
+
   const { data: categories = [], isLoading } = useQuery({
     queryKey: productKeys.categories(),
     queryFn: productApi.getCategories,
@@ -46,6 +49,7 @@ export function CategoryTabs({
           label="Все"
           isActive={selectedParentId === null}
           onClick={() => {
+            selectionChanged();
             onSelectParent(null);
             onSelectSub(null);
           }}
@@ -56,6 +60,7 @@ export function CategoryTabs({
             label={cat.name}
             isActive={selectedParentId === cat.id}
             onClick={() => {
+              selectionChanged();
               onSelectParent(cat.id);
               onSelectSub(null);
             }}
@@ -71,9 +76,10 @@ export function CategoryTabs({
               key={sub.id}
               label={sub.name}
               isActive={selectedSubId === sub.id}
-              onClick={() =>
-                onSelectSub(selectedSubId === sub.id ? null : sub.id)
-              }
+              onClick={() => {
+                selectionChanged();
+                onSelectSub(selectedSubId === sub.id ? null : sub.id);
+              }}
             />
           ))}
         </div>

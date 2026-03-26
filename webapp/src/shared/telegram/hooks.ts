@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useTelegram } from "./provider";
 
 export function useMainButton(
@@ -61,4 +61,31 @@ export function useBackButton(onBack: () => void) {
 export function useTelegramUser() {
   const { twa } = useTelegram();
   return twa?.initDataUnsafe?.user ?? null;
+}
+
+type ImpactStyle = "light" | "medium" | "heavy" | "rigid" | "soft";
+type NotificationType = "error" | "success" | "warning";
+
+export function useHapticFeedback() {
+  const { twa } = useTelegram();
+
+  const impact = useCallback(
+    (style: ImpactStyle = "medium") => {
+      twa?.HapticFeedback?.impactOccurred(style);
+    },
+    [twa],
+  );
+
+  const notification = useCallback(
+    (type: NotificationType) => {
+      twa?.HapticFeedback?.notificationOccurred(type);
+    },
+    [twa],
+  );
+
+  const selectionChanged = useCallback(() => {
+    twa?.HapticFeedback?.selectionChanged();
+  }, [twa]);
+
+  return { impact, notification, selectionChanged };
 }

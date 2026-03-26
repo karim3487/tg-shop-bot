@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useCartQuery, useAddToCartMutation, useRemoveFromCartMutation } from "@/entities/cart";
 import { Button } from "@/shared/ui";
 import type { ProductListItem } from "@/entities/product";
+import { useHapticFeedback } from "@/shared/telegram/hooks";
 
 interface AddToCartButtonProps {
   product: ProductListItem;
@@ -14,24 +15,26 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
   const { mutate: addToCart, isPending: isAdding } = useAddToCartMutation();
   const { mutate: removeFromCart, isPending: isRemoving } = useRemoveFromCartMutation();
   const isPending = isAdding || isRemoving;
+  const { impact } = useHapticFeedback();
 
   const cartItem = cart?.items.find((i) => i.product.id === product.id);
   const quantity = cartItem?.quantity ?? 0;
 
   const handleAdd = useCallback(() => {
     if (isPending) return;
+    impact(quantity === 0 ? "medium" : "light");
     addToCart({ productId: product.id, quantity: quantity + 1, product });
-  }, [isPending, addToCart, product, quantity]);
+  }, [isPending, addToCart, product, quantity, impact]);
 
   const handleRemove = useCallback(() => {
     if (isPending || !cartItem) return;
-    
+    impact("light");
     if (cartItem.quantity === 1) {
       removeFromCart(cartItem.id);
     } else {
       addToCart({ productId: product.id, quantity: quantity - 1, product });
     }
-  }, [isPending, cartItem, removeFromCart, addToCart, product, quantity]);
+  }, [isPending, cartItem, removeFromCart, addToCart, product, quantity, impact]);
 
   // When quantity is 0, show normal add to cart button
   if (quantity === 0) {

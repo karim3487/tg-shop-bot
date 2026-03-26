@@ -9,7 +9,7 @@ import { useClearCartMutation } from "@/entities/cart";
 import { orderApi } from "@/entities/order";
 import type { Order } from "@/entities/order";
 import { ApiError } from "@/shared/api/client";
-import { useTelegramUser } from "@/shared/telegram/hooks";
+import { useTelegramUser, useHapticFeedback } from "@/shared/telegram/hooks";
 
 // ─── Zod Schema ───────────────────────────────────────────────────────────────
 
@@ -34,6 +34,7 @@ export function CheckoutForm({ onSuccess, formId, onSubmittingChange }: Checkout
   const queryClient = useQueryClient();
   const { mutateAsync: clearCart } = useClearCartMutation();
   const tgUser = useTelegramUser();
+  const { notification } = useHapticFeedback();
 
   const {
     register,
@@ -48,10 +49,12 @@ export function CheckoutForm({ onSuccess, formId, onSubmittingChange }: Checkout
   const createOrderMutation = useMutation({
     mutationFn: (data: FormValues) => orderApi.createOrder(data),
     onSuccess: (order) => {
+      notification("success");
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       onSuccess(order);
     },
     onError: (err) => {
+      notification("error");
       if (err instanceof ApiError) {
         if (err.status === 400) {
           mapDjangoErrors(err.body, setError);

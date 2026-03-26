@@ -49,11 +49,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
-    # REMOVED public ports for security, use internal network. 
-    # If the user needs the console, they can re-enable 9001.
-    # ports:
-    #   - "9000:9000"
-    #   - "9001:9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     healthcheck:

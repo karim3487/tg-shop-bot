@@ -16,7 +16,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.12-slim
 
 # Install tini and gosu
-RUN apt-get update && apt-get install -y --no-install-recommends tini gosu && \
+RUN apt-get update && apt-get install -y --no-install-recommends tini gosu fonts-dejavu-core && \
     rm -rf /var/lib/apt/lists/*
 
 # Add non-root user

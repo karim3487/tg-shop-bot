@@ -1,38 +1,34 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import type { TelegramWebApp } from "./types";
+import type { WebApp, ThemeParams } from "telegram-web-app";
 
 interface TelegramContextValue {
-  twa: TelegramWebApp | null;
+  twa: WebApp | null;
   isReady: boolean;
+  themeParams: ThemeParams;
+  viewportHeight: number;
 }
 
 const TelegramContext = createContext<TelegramContextValue>({
   twa: null,
   isReady: false,
+  themeParams: {},
+  viewportHeight: 0,
 });
 
-function applyTheme(params: TelegramWebApp["themeParams"]): void {
+function applyTheme(params: ThemeParams): void {
   const root = document.documentElement;
-  // Fallback map in case the Telegram native client doesn't inject it automatically
-  const map: Record<string, string | undefined> = {
-    "--tg-theme-bg-color": params.bg_color,
-    "--tg-theme-secondary-bg-color": params.secondary_bg_color,
-    "--tg-theme-text-color": params.text_color,
-    "--tg-theme-hint-color": params.hint_color,
-    "--tg-theme-link-color": params.link_color,
-    "--tg-theme-button-color": params.button_color,
-    "--tg-theme-button-text-color": params.button_text_color,
-  };
-  for (const [key, value] of Object.entries(map)) {
-    if (value) root.style.setProperty(key, value);
+  for (const [key, value] of Object.entries(params)) {
+    if (value) root.style.setProperty(`--tg-theme-${key.replace(/_/g, "-")}`, value);
   }
 }
 
 export function TelegramProvider({ children }: { children: ReactNode }) {
-  const [twa, setTwa] = useState<TelegramWebApp | null>(null);
+  const [twa, setTwa] = useState<WebApp | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [themeParams, setThemeParams] = useState<ThemeParams>({});
+  const [viewportHeight, setViewportHeight] = useState(0);
 
   useEffect(() => {
     // Safe: runs only after hydration on the client
@@ -40,14 +36,38 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
     if (webApp) {
       webApp.ready();   // signals Telegram client to hide loading splash
       webApp.expand();  // full-height mode
-      applyTheme(webApp.themeParams); // map to CSS variables
+      webApp.disableVerticalSwipes();
+      applyTheme(webApp.themeParams);
+      setThemeParams(webApp.themeParams);
+      setViewportHeight(webApp.viewportStableHeight);
     }
     setTwa(webApp);
     setIsReady(true);
   }, []);
 
+  useEffect(() => {
+    if (!twa) return;
+
+    const handleThemeChanged = () => {
+      applyTheme(twa.themeParams);
+      setThemeParams({ ...twa.themeParams });
+    };
+
+    const handleViewportChanged = ({ isStateStable }: { isStateStable: boolean }) => {
+      if (isStateStable) setViewportHeight(twa.viewportStableHeight);
+    };
+
+    twa.onEvent("themeChanged", handleThemeChanged);
+    twa.onEvent("viewportChanged", handleViewportChanged);
+
+    return () => {
+      twa.offEvent("themeChanged", handleThemeChanged);
+      twa.offEvent("viewportChanged", handleViewportChanged);
+    };
+  }, [twa]);
+
   return (
-    <TelegramContext.Provider value={{ twa, isReady }}>
+    <TelegramContext.Provider value={{ twa, isReady, themeParams, viewportHeight }}>
       {children}
     </TelegramContext.Provider>
   );
